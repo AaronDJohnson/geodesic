@@ -1,4 +1,4 @@
-from mpmath import mp, sqrt
+from numpy import sqrt
 
 
 def radial_roots(En, Q, aa, slr, ecc, M=1):
@@ -14,7 +14,7 @@ def radial_roots(En, Q, aa, slr, ecc, M=1):
         ecc (float): eccentricity [0, 1)
 
     Keyword Args:
-        M (float): mass of the large body
+        M (float) [1]: mass of the large body
 
     Returns:
         r1 (float): apastron
@@ -22,26 +22,18 @@ def radial_roots(En, Q, aa, slr, ecc, M=1):
         r3 (float)
         r4 (float)
     """
-    try:
-        prec = mp.prec
-        mp.prec += 10
-        En2 = En * En
+    En2 = En * En
 
-        mp.prec += 10
-        r1 = slr / (1 - ecc)
-        r2 = slr / (1 + ecc)
+    r1 = slr / (1 - ecc)
+    r2 = slr / (1 + ecc)
 
-        mp.prec += 10
-        AplusB = (2 * M) / (1 - En2) - (r1 + r2)
-        AB = (aa * aa * Q) / ((1 - En2) * r1 * r2)
-        mp.prec += 10
-        r3 = (AplusB + sqrt((AplusB * AplusB - 4 * AB))) / 2
-        r4 = 0
-        if r3 != 0:
-            r4 = AB / r3
-        return r1, r2, r3, r4
-    finally:
-        mp.prec = prec
+    AplusB = (2 * M) / (1 - En2) - (r1 + r2)
+    AB = (aa * aa * Q) / ((1 - En2) * r1 * r2)
+    r3 = (AplusB + sqrt((AplusB * AplusB - 4 * AB))) / 2
+    r4 = 0
+    if r3 != 0:
+        r4 = AB / r3
+    return r1, r2, r3, r4
 
 
 def polar_roots(En, Lz, aa, slr, x):
@@ -65,7 +57,7 @@ def polar_roots(En, Lz, aa, slr, x):
     L2 = Lz * Lz
 
     zm = sqrt(1 - x * x)
-    if abs(zm) == 1:  # TODO(aaron): make sure this works properly
+    if abs(zm) == 1:
         zp = 0
     else:
         zp = sqrt(aa * aa * (1 - En * En) + L2 / (1 - zm * zm))

@@ -1,4 +1,4 @@
-from mpmath import sqrt, mp
+from numpy import sqrt
 from sys import exit
 
 # ------------------------------------------------------------------------------
@@ -11,62 +11,55 @@ def eq_energy(aa, slr, ecc, x):
     Energy for the Kerr equatorial case (inclination value x = 1).
 
     Parameters:
-        aa (mpf): spin parameter (0, 1)
-        slr (mpf): semi-latus rectum [~2, inf)
-        ecc (mpf): eccentricity [0, 1)
-        x (mpf): inclination value given by cos(theta_inc)
+        aa (float): spin parameter (0, 1)
+        slr (float): semi-latus rectum [~2, inf)
+        ecc (float): eccentricity [0, 1)
+        x (float): inclination value given by cos(theta_inc)
                    x = -1 -> retrograde
                    x = +1 -> prograde
 
     Returns:
-        En (mpf): energy
+        En (float): energy
     """
-    try:
-        prec = mp.prec
-        mp.prec += 10
-
-        ecc2 = ecc * ecc
-        eta = ecc2 - 1
-        eta2 = eta * eta
-        aa2 = aa * aa
-        aa4 = aa2 * aa2
-        aa6 = aa4 * aa2
-        mp.prec += 10
-        return sqrt(
-            1
-            - (
-                -eta
-                * (
-                    1
-                    + (
-                        eta
+    ecc2 = ecc * ecc
+    eta = ecc2 - 1
+    eta2 = eta * eta
+    aa2 = aa * aa
+    aa4 = aa2 * aa2
+    aa6 = aa4 * aa2
+    return sqrt(
+        1
+        - (
+            -eta
+            * (
+                1
+                + (
+                    eta
+                    * (
+                        aa2 * (1 + 3 * ecc2 + slr)
+                        + slr
                         * (
-                            aa2 * (1 + 3 * ecc2 + slr)
+                            -3
+                            - ecc2
                             + slr
-                            * (
-                                -3
-                                - ecc2
-                                + slr
-                                - 2
-                                * sqrt(
-                                    (
-                                        aa6 * eta2
-                                        + aa2 * (-4 * ecc2 + (-2 + slr) ** 2) * slr ** 2
-                                        + 2 * aa4 * slr * (-2 + slr + ecc2 * (2 + slr))
-                                    )
-                                    / (slr ** 3 * x ** 2)
+                            - 2
+                            * sqrt(
+                                (
+                                    aa6 * eta2
+                                    + aa2 * (-4 * ecc2 + (-2 + slr) ** 2) * slr ** 2
+                                    + 2 * aa4 * slr * (-2 + slr + ecc2 * (2 + slr))
                                 )
-                                * x
+                                / (slr ** 3 * x ** 2)
                             )
+                            * x
                         )
                     )
-                    / (-4 * aa2 * eta2 + (3 + ecc2 - slr) ** 2 * slr)
                 )
+                / (-4 * aa2 * eta2 + (3 + ecc2 - slr) ** 2 * slr)
             )
-            / slr
         )
-    finally:
-        mp.prec = prec
+        / slr
+    )
 
 
 def eq_ang_momentum(aa, slr, ecc, x):
@@ -74,55 +67,48 @@ def eq_ang_momentum(aa, slr, ecc, x):
     Angular momentum for the Kerr equatorial case (inclination value x = 1).
 
     Parameters:
-        aa (mpf): spin parameter (0, 1)
-        slr (mpf): semi-latus rectum [6, inf)
-        ecc (mpf): eccentricity [0, 1)
-        x (mpf): inclination value given by cos(theta_inc)
+        aa (float): spin parameter (0, 1)
+        slr (float): semi-latus rectum [6, inf)
+        ecc (float): eccentricity [0, 1)
+        x (float): inclination value given by cos(theta_inc)
                    x = -1 -> retrograde
                    x = +1 -> prograde
 
     Returns:
-        Lz (mpf): angular momentum
+        Lz (float): angular momentum
     """
-    try:
-        prec = mp.prec
-        mp.prec += 10
-
-        ecc2 = ecc * ecc
-        eta = ecc2 - 1
-        eta2 = eta * eta
-        aa2 = aa * aa
-        aa4 = aa2 * aa2
-        aa6 = aa4 * aa2
-        slr2 = slr * slr
-        slr3 = slr2 * slr
-        x2 = x * x
-        mp.prec += 10
-        num_root = slr * (
-            -3
-            - ecc2
-            + slr
-            - 2
-            * sqrt(
-                (
-                    aa6 * eta2
-                    + aa2 * (-4 * ecc2 + (-2 + slr) ** 2) * slr2
-                    + 2 * aa4 * slr * (-2 + slr + ecc2 * (2 + slr))
-                )
-                / (slr3 * x2)
+    ecc2 = ecc * ecc
+    eta = ecc2 - 1
+    eta2 = eta * eta
+    aa2 = aa * aa
+    aa4 = aa2 * aa2
+    aa6 = aa4 * aa2
+    slr2 = slr * slr
+    slr3 = slr2 * slr
+    x2 = x * x
+    num_root = slr * (
+        -3
+        - ecc2
+        + slr
+        - 2
+        * sqrt(
+            (
+                aa6 * eta2
+                + aa2 * (-4 * ecc2 + (-2 + slr) ** 2) * slr2
+                + 2 * aa4 * slr * (-2 + slr + ecc2 * (2 + slr))
             )
-            * x
+            / (slr3 * x2)
         )
-        denom = -4 * aa2 * eta2 + (3 + ecc2 - slr) ** 2 * slr
-        return slr * x * sqrt(
-            (aa2 * (1 + 3 * ecc2 + slr) + num_root) / (denom * x2)
-        ) + aa * sqrt(
-            1
-            - (-eta * (1 + (eta * (aa2 * (1 + 3 * ecc2 + slr) + num_root)) / denom))
-            / slr
-        )
-    finally:
-        mp.prec = prec
+        * x
+    )
+    denom = -4 * aa2 * eta2 + (3 + ecc2 - slr) ** 2 * slr
+    return slr * x * sqrt(
+        (aa2 * (1 + 3 * ecc2 + slr) + num_root) / (denom * x2)
+    ) + aa * sqrt(
+        1
+        - (-eta * (1 + (eta * (aa2 * (1 + 3 * ecc2 + slr) + num_root)) / denom))
+        / slr
+    )
 
 
 def calc_eq_constants(aa, slr, ecc, x):
@@ -132,17 +118,17 @@ def calc_eq_constants(aa, slr, ecc, x):
     Note that for the equatorial case, the Carter constant, Q = 0.
 
     Parameters:
-        aa (mpf): spin parameter (0, 1)
-        slr (mpf): semi-latus rectum [6, inf)
-        ecc (mpf): eccentricity [0, 1)
-        x (mpf): inclination value given by cos(theta_inc)
+        aa (float): spin parameter (0, 1)
+        slr (float): semi-latus rectum [6, inf)
+        ecc (float): eccentricity [0, 1)
+        x (float): inclination value given by cos(theta_inc)
                    x = -1 -> retrograde
                    x = +1 -> prograde
 
     Returns:
-        En (mpf): energy
-        Lz (mpf): angular momentum
-        Q (mpf): Carter constant
+        En (float): energy
+        Lz (float): angular momentum
+        Q (float): Carter constant
     """
     En = eq_energy(aa, slr, ecc, x)
     Lz = eq_ang_momentum(aa, slr, ecc, x)

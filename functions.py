@@ -1,4 +1,4 @@
-from mpmath import mp, mpf, cos
+from numpy import cos
 try:
     from constants.constants import calc_constants
     from geo_roots import radial_roots, polar_roots
@@ -12,7 +12,7 @@ except:
     from geodesic.coordinates.coords_gen import calc_gen_coords_mino
 
 
-def calc_consts(aa, slr, ecc, x, digits):
+def calc_consts(aa, slr, ecc, x):
     """
     Compute adiabatic constants.
 
@@ -21,28 +21,17 @@ def calc_consts(aa, slr, ecc, x, digits):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
 
     Returns:
-        En (mpf): energy
-        Lz (mpf): angular momentum
-        Q (mpf): Carter constant
+        En (float): energy
+        Lz (float): angular momentum
+        Q (float): Carter constant
     """
-    try:
-        mp.dps = digits
-        prec = mp.prec
-        mp.prec += 30
-        aa = mpf(str(aa))
-        slr = mpf(str(slr))
-        ecc = mpf(str(ecc))
-        x = mpf(str(x))
-        En, Lz, Q = calc_constants(aa, slr, ecc, x)
-        return En, Lz, Q
-    finally:
-        mp.prec = prec
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    return En, Lz, Q
 
 
-def calc_radial_roots(aa, slr, ecc, x, digits):
+def calc_radial_roots(aa, slr, ecc, x):
     """
     Compute radial roots.
 
@@ -51,30 +40,19 @@ def calc_radial_roots(aa, slr, ecc, x, digits):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
 
     Returns:
-        r1 (mpf): apastron
-        r2 (mpf): periastron
-        r3 (mpf): radial root 3
-        r4 (mpf): radial root 4
+        r1 (float): apastron
+        r2 (float): periastron
+        r3 (float): radial root 3
+        r4 (float): radial root 4
     """
-    try:
-        mp.dps = digits
-        prec = mp.prec
-        mp.prec += 30
-        aa = mpf(str(aa))
-        slr = mpf(str(slr))
-        ecc = mpf(str(ecc))
-        x = mpf(str(x))
-        En, Lz, Q = calc_constants(aa, slr, ecc, x)
-        r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc)
-        return r1, r2, r3, r4
-    finally:
-        mp.prec = prec
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc)
+    return r1, r2, r3, r4
 
 
-def calc_polar_roots(aa, slr, ecc, x, digits):
+def calc_polar_roots(aa, slr, ecc, x):
     """
     Compute polar roots.
 
@@ -83,28 +61,17 @@ def calc_polar_roots(aa, slr, ecc, x, digits):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
 
     Returns:
-        zp (mpf): polar root
-        zm (mpf): polar root
+        zp (float): polar root
+        zm (float): polar root
     """
-    try:
-        mp.dps = digits
-        prec = mp.prec
-        mp.prec += 30
-        aa = mpf(str(aa))
-        slr = mpf(str(slr))
-        ecc = mpf(str(ecc))
-        x = mpf(str(x))
-        En, Lz, Q = calc_constants(aa, slr, ecc, x)
-        zp, zm = polar_roots(En, Lz, aa, slr, x)
-        return zp, zm
-    finally:
-        mp.prec = prec
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    zp, zm = polar_roots(En, Lz, aa, slr, x)
+    return zp, zm
 
 
-def calc_mino_freqs(aa, slr, ecc, x, digits, M=1):
+def calc_mino_freqs(aa, slr, ecc, x, M=1):
     """
     Compute Mino frequencies.
 
@@ -113,33 +80,23 @@ def calc_mino_freqs(aa, slr, ecc, x, digits, M=1):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
+        M (float) [1]: stellar black hole mass
 
     Returns:
-        ups_r (mpf): radial Mino frequency
-        ups_theta (mpf): polar Mino frequency
-        ups_phi (mpf): azimuthal Mino frequency
-        gamma (mpf): temporal Mino frequency
+        ups_r (float): radial Mino frequency
+        ups_theta (float): polar Mino frequency
+        ups_phi (float): azimuthal Mino frequency
+        gamma (float): temporal Mino frequency
     """
-    try:
-        mp.dps = digits
-        prec = mp.prec
-        mp.prec += 30
-        aa = mpf(str(aa))
-        slr = mpf(str(slr))
-        ecc = mpf(str(ecc))
-        x = mpf(str(x))
-        En, Lz, Q = calc_constants(aa, slr, ecc, x)
-        r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M)
-        ups_r, ups_theta, ups_phi, gamma = mino_freqs(
-            r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
-        )
-        return ups_r, ups_theta, ups_phi, gamma
-    finally:
-        mp.prec = prec
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M)
+    ups_r, ups_theta, ups_phi, gamma = mino_freqs(
+        r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
+    )
+    return ups_r, ups_theta, ups_phi, gamma
 
 
-def calc_boyer_freqs(aa, slr, ecc, x, digits):
+def calc_boyer_freqs(aa, slr, ecc, x):
     """
     Compute Boyer-Lindquist frequencies.
 
@@ -148,30 +105,24 @@ def calc_boyer_freqs(aa, slr, ecc, x, digits):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
 
     Returns:
-        Omega_r (mpf): radial Boyer-Lindquist frequency
-        Omega_theta (mpf): polar Boyer-Lindquist frequency
-        Omega_phi (mpf): azimuthal Boyer-Lindquist frequency
+        Omega_r (float): radial Boyer-Lindquist frequency
+        Omega_theta (float): polar Boyer-Lindquist frequency
+        Omega_phi (float): azimuthal Boyer-Lindquist frequency
     """
-    mp.dps = digits
-    aa = mpf(str(aa))
-    slr = mpf(str(slr))
-    ecc = mpf(str(ecc))
-    x = mpf(str(x))
-    En, Lz, Q = mp_calc_constants(aa, slr, ecc, x)
-    r1, r2, r3, r4 = mp_radial_roots(En, Q, aa, slr, ecc, M)
-    ups_r, ups_theta, ups_phi, gamma = mp_mino_freqs(
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M)
+    ups_r, ups_theta, ups_phi, gamma = mino_freqs(
         r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
     )
-    omega_r, omega_theta, omega_phi = mp_boyer_freqs(
+    omega_r, omega_theta, omega_phi = boyer_freqs(
         ups_r, ups_theta, ups_phi, gamma, aa, slr, ecc, x, M
     )
     return omega_r, omega_theta, omega_phi
 
 
-def find_omega(en, em, kay, aa, slr, ecc, x, digits):
+def find_omega(en, em, kay, aa, slr, ecc, x):
     """
     Compute gravitational wave frequency omega.
 
@@ -183,31 +134,25 @@ def find_omega(en, em, kay, aa, slr, ecc, x, digits):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
 
     Returns:
-        omega (mpf): gravitational wave frequency
+        omega (float): gravitational wave frequency
     """
-    mp.dps = digits
-    aa = mpf(str(aa))
-    slr = mpf(str(slr))
-    ecc = mpf(str(ecc))
-    x = mpf(str(x))
-    En, Lz, Q = mp_calc_constants(aa, slr, ecc, x)
-    r1, r2, r3, r4 = mp_radial_roots(En, Q, aa, slr, ecc, M)
-    ups_r, ups_theta, ups_phi, gamma = mp_mino_freqs(
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M)
+    ups_r, ups_theta, ups_phi, gamma = mino_freqs(
         r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
     )
-    omega_r, omega_theta, omega_phi = mp_boyer_freqs(
+    omega_r, omega_theta, omega_phi = boyer_freqs(
         ups_r, ups_theta, ups_phi, gamma, aa, slr, ecc, x, M
     )
     omega = en * omega_r + em * omega_phi + kay * omega_theta
     return omega
 
 
-def coordinates(psi, aa, slr, ecc, x, digits):
+def coordinates(psi, aa, slr, ecc, x):
     """
-    Compute coordinates of the orbit given two angles psi and chi.
+    Compute coordinates of the orbit given radial angle psi.
 
     Parameters:
         psi (float): radial angle
@@ -216,61 +161,46 @@ def coordinates(psi, aa, slr, ecc, x, digits):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
 
     Returns:
-        t (mpf): time coordinate
-        r (mpf): radial coordinate
-        theta (mpf): theta coordinate
-        phi (mpf): phi coordinate
+        t (float): time coordinate
+        r (float): radial coordinate
+        theta (float): theta coordinate
+        phi (float): phi coordinate
     """
-    if x ** 2 == 1:
-        chi = 0  # equatorial orbits don't need chi
-    try:
-        mp.dps = digits
-        prec = mp.prec
-        mp.prec += 30
-        psi = mpf(str(psi))
-        # chi = mpf(str(chi))
-        aa = mpf(str(aa))
-        slr = mpf(str(slr))
-        ecc = mpf(str(ecc))
-        x = mpf(str(x))
-        En, Lz, Q = calc_constants(aa, slr, ecc, x)
-        r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M=1)
-        zp, zm = polar_roots(En, Lz, aa, slr, x)
-        ups_r, ups_theta, ups_phi, gamma = mino_freqs(
-            r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
-        )
-        print(psi)
-        # print(chi)
-        t, r, theta, phi = calc_coords(
-            psi,
-            # chi,
-            ups_r,
-            ups_theta,
-            ups_phi,
-            gamma,
-            r1,
-            r2,
-            r3,
-            r4,
-            zp,
-            zm,
-            En,
-            Lz,
-            Q,
-            aa,
-            slr,
-            ecc,
-            x,
-        )
-        return t, r, theta, phi
-    finally:
-        mp.prec = prec
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M=1)
+    zp, zm = polar_roots(En, Lz, aa, slr, x)
+    ups_r, ups_theta, ups_phi, gamma = mino_freqs(
+        r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
+    )
+    # print(psi)
+    # print(chi)
+    t, r, theta, phi = calc_coords(
+        psi,
+        # chi,
+        ups_r,
+        ups_theta,
+        ups_phi,
+        gamma,
+        r1,
+        r2,
+        r3,
+        r4,
+        zp,
+        zm,
+        En,
+        Lz,
+        Q,
+        aa,
+        slr,
+        ecc,
+        x,
+    )
+    return t, r, theta, phi
 
 
-def mino_coords(mino_t, aa, slr, ecc, x, digits):
+def mino_coords(mino_t, aa, slr, ecc, x):
     """
     Compute coordinates of the orbit given two angles psi and chi.
 
@@ -280,46 +210,34 @@ def mino_coords(mino_t, aa, slr, ecc, x, digits):
         slr (float): semi-latus rectum
         ecc (float): eccentricity
         x (float): cos of the inclination
-        digits (int): number of digits of accuracy requested
 
     Returns:
-        t (mpf): time coordinate
-        r (mpf): radial coordinate
-        theta (mpf): theta coordinate
-        phi (mpf): phi coordinate
+        t (float): time coordinate
+        r (float): radial coordinate
+        theta (float): theta coordinate
+        phi (float): phi coordinate
     """
-    try:
-        mp.dps = digits
-        prec = mp.prec
-        mp.prec += 30
-        mino_t = mpf(str(mino_t))
-        aa = mpf(str(aa))
-        slr = mpf(str(slr))
-        ecc = mpf(str(ecc))
-        x = mpf(str(x))
-        En, Lz, Q = calc_constants(aa, slr, ecc, x)
-        r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M=1)
-        zp, zm = polar_roots(En, Lz, aa, slr, x)
-        ups_r, ups_theta, ups_phi, gamma = mino_freqs(
-            r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
-        )
-        t, r, theta, phi = calc_gen_coords_mino(
-            mino_t,
-            ups_r,
-            ups_theta,
-            ups_phi,
-            gamma,
-            r1,
-            r2,
-            r3,
-            r4,
-            zp,
-            zm,
-            En,
-            Lz,
-            Q,
-            aa,
-        )
-        return t, r, theta, phi
-    finally:
-        mp.prec = prec
+    En, Lz, Q = calc_constants(aa, slr, ecc, x)
+    r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M=1)
+    zp, zm = polar_roots(En, Lz, aa, slr, x)
+    ups_r, ups_theta, ups_phi, gamma = mino_freqs(
+        r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x
+    )
+    t, r, theta, phi = calc_gen_coords_mino(
+        mino_t,
+        ups_r,
+        ups_theta,
+        ups_phi,
+        gamma,
+        r1,
+        r2,
+        r3,
+        r4,
+        zp,
+        zm,
+        En,
+        Lz,
+        Q,
+        aa,
+    )
+    return t, r, theta, phi

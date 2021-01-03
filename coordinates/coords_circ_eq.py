@@ -1,7 +1,22 @@
-from mpmath import sqrt, mp
+from numpy import sqrt
 
 
 def calc_circular_eq_coords(psi, En, Lz, aa, slr, M=1):
+    """
+    Parameters:
+        psi (float): angle associated with radial motion.
+        En (float): constant energy
+        Lz (float): angular momentum constant
+        aa (float): MBH spin
+        slr (float): semi-latus rectum
+        M (float) [1]: stellar mass black hole mass
+
+    Returns:
+        t (float): time coordinate
+        r (float): radial coordinate
+        theta (float): polar coordinate
+        phi (float): azimuthal coordinate
+    """
     # lam_psi is used to cross check with circular orbits in BHPTK
     # lam_psi = (psi / (sqrt(1 - En**2 + 3*(1 - En**2) + 2*(1 - En**2 - 1/slr) + 
     #            (aa**2*(1 - En**2) + Lz**2)/slr**2 - 4/slr)*slr))

@@ -1,6 +1,8 @@
-from mpmath import sin, asin, cos, acos, mp, asinh
-from mpmath import sqrt, ellipfun, floor, pi, tan
-from mpmath import ellipk, ellipf, ellipe, ellippi
+from numpy import sin, asin, cos, acos, asinh
+from numpy import sqrt, floor, pi, tan, real
+from scipy.special import ellipj, ellipk, ellipe
+from scipy.special import ellipeinc, ellipf, ellipfinc
+from mpmath import ellippi  # elliptic integral of third kind not implemented in scipy yet
 try:
     from special_func import am
 except:
@@ -35,13 +37,15 @@ def calc_rq(qr, r1, r2, r3, r4):
     Returns:
         rq (float)
     """
-    pi = mp.pi
     kr = ((r1 - r2) * (r3 - r4)) / ((r1 - r3) * (r2 - r4))
 
-    sn = ellipfun("sn")
+    u = (qr * ellipk(kr)) / pi
+    m = kr
+    sn, __, __, __ = ellipj(u, m)
+
     return (
-        -(r2 * (r1 - r3)) + (r1 - r2) * r3 * sn((qr * ellipk(kr)) / pi, kr) ** 2
-    ) / (-r1 + r3 + (r1 - r2) * sn((qr * ellipk(kr)) / pi, kr) ** 2)
+        -(r2 * (r1 - r3)) + (r1 - r2) * r3 * sn ** 2
+    ) / (-r1 + r3 + (r1 - r2) * sn ** 2)
 
 
 def calc_zq(qz, zp, zm, En, aa):
@@ -59,10 +63,11 @@ def calc_zq(qz, zp, zm, En, aa):
         zq (float)
     """
     ktheta = (aa ** 2 * (1 - En ** 2) * zm ** 2) / zp ** 2
-    sn = ellipfun("sn")
-    pi = mp.pi
+    u = (2 * (pi / 2.0 + qz) * ellipk(ktheta)) / pi
+    m = ktheta
+    sn, __, __, __ = ellipj(u, m)
 
-    return zm * sn((2 * (pi / 2.0 + qz) * ellipk(ktheta)) / pi, ktheta)
+    return zm * sn
 
 
 def calc_psi_r(qr, r1, r2, r3, r4):
@@ -79,9 +84,11 @@ def calc_psi_r(qr, r1, r2, r3, r4):
     Returns:
         psi_r (float)
     """
-    pi = mp.pi
     kr = ((r1 - r2) * (r3 - r4)) / ((r1 - r3) * (r2 - r4))
-    return am((qr * ellipk(kr)) / pi, kr)
+    u = (qr * ellipk(kr)) / pi
+    m = kr
+    __, __, __, ph = ellipj(u, m)
+    return ph
 
 
 def calc_t_r(qr, r1, r2, r3, r4, En, Lz, aa, M=1):
@@ -104,7 +111,6 @@ def calc_t_r(qr, r1, r2, r3, r4, En, Lz, aa, M=1):
     Returns:
         t_r (float)
     """
-    pi = mp.pi
     psi_r = calc_psi_r(qr, r1, r2, r3, r4)
 
     kr = ((r1 - r2) * (r3 - r4)) / ((r1 - r3) * (r2 - r4))
@@ -127,27 +133,27 @@ def calc_t_r(qr, r1, r2, r3, r4, En, Lz, aa, M=1):
                         -(
                             (
                                 (-2 * aa ** 2 + (4 - (aa * Lz) / En) * rm)
-                                * ((qr * ellippi(hm, kr)) / pi - ellippi(hm, psi_r, kr))
+                                * ((qr * float(ellippi(hm, kr))) / pi - float(ellippi(hm, psi_r, kr)))
                             )
                             / ((r2 - rm) * (r3 - rm))
                         )
                         + (
                             (-2 * aa ** 2 + (4 - (aa * Lz) / En) * rp)
-                            * ((qr * ellippi(hp, kr)) / pi - ellippi(hp, psi_r, kr))
+                            * ((qr * float(ellippi(hp, kr))) / pi - float(ellippi(hp, psi_r, kr)))
                         )
                         / ((r2 - rp) * (r3 - rp))
                     )
                 )
                 / (-rm + rp)
-                + 4 * (r2 - r3) * ((qr * ellippi(hr, kr)) / pi - ellippi(hr, psi_r, kr))
+                + 4 * (r2 - r3) * ((qr * float(ellippi(hr, kr))) / pi - float(ellippi(hr, psi_r, kr)))
                 + (r2 - r3)
                 * (r1 + r2 + r3 + r4)
-                * ((qr * ellippi(hr, kr)) / pi - ellippi(hr, psi_r, kr))
+                * ((qr * float(ellippi(hr, kr))) / pi - float(ellippi(hr, psi_r, kr)))
                 + (r1 - r3)
                 * (r2 - r4)
                 * (
                     (qr * ellipe(kr)) / pi
-                    - ellipe(psi_r, kr)
+                    - ellipeinc(psi_r, kr)
                     + (hr * cos(psi_r) * sin(psi_r) * sqrt(1 - kr * sin(psi_r) ** 2))
                     / (1 - hr * sin(psi_r) ** 2)
                 )
@@ -177,7 +183,7 @@ def calc_phi_r(qr, r1, r2, r3, r4, En, Lz, aa, M=1):
     Returns:
         phi_r (float)
     """
-    pi = mp.pi
+
     psi_r = calc_psi_r(qr, r1, r2, r3, r4)
     kr = ((r1 - r2) * (r3 - r4)) / ((r1 - r3) * (r2 - r4))
     rp = M + sqrt(-(aa ** 2) + M ** 2)
@@ -195,14 +201,14 @@ def calc_phi_r(qr, r1, r2, r3, r4, En, Lz, aa, M=1):
                 (
                     (r2 - r3)
                     * (-((aa * Lz) / En) + 2 * rm)
-                    * ((qr * ellippi(hm, kr)) / pi - ellippi(hm, psi_r, kr))
+                    * ((qr * float(ellippi(hm, kr))) / pi - float(ellippi(hm, psi_r, kr)))
                 )
                 / ((r2 - rm) * (r3 - rm))
             )
             + (
                 (r2 - r3)
                 * (-((aa * Lz) / En) + 2 * rp)
-                * ((qr * ellippi(hp, kr)) / pi - ellippi(hp, psi_r, kr))
+                * ((qr * float(ellippi(hp, kr))) / pi - float(ellippi(hp, psi_r, kr)))
             )
             / ((r2 - rp) * (r3 - rp))
         )
@@ -224,7 +230,10 @@ def calc_psi_z(qz, zp, zm, En, aa):
         psi_z (float)
     """
     ktheta = (aa ** 2 * (1 - En ** 2) * zm ** 2) / zp ** 2
-    return am((2 * (pi / 2.0 + qz) * ellipk(ktheta)) / pi, ktheta)
+    u = (2 * (pi / 2.0 + qz) * ellipk(ktheta)) / pi
+    m = ktheta
+    __, __, __, ph = ellipj(u, m)
+    return ph
 
 
 def calc_t_z(qz, zp, zm, En, aa):
@@ -244,7 +253,7 @@ def calc_t_z(qz, zp, zm, En, aa):
     psi_z = calc_psi_z(qz, zp, zm, En, aa)
     ktheta = (aa ** 2 * (1 - En ** 2) * zm ** 2) / zp ** 2
     return (
-        En * zp * ((2 * (pi / 2.0 + qz) * ellipe(ktheta)) / pi - ellipe(psi_z, ktheta))
+        En * zp * ((2 * (pi / 2.0 + qz) * ellipe(ktheta)) / pi - ellipeinc(psi_z, ktheta))
     ) / (1 - En ** 2)
 
 
@@ -269,8 +278,8 @@ def calc_phi_z(qz, zp, zm, En, Lz, aa):
         (
             Lz
             * (
-                (2 * (pi / 2.0 + qz) * ellippi(zm ** 2, ktheta)) / pi
-                - ellippi(zm ** 2, psi_z, ktheta)
+                (2 * (pi / 2.0 + qz) * float(ellippi(zm ** 2, ktheta))) / pi
+                - float(ellippi(zm ** 2, psi_z, ktheta))
             )
         )
         / zp
@@ -493,7 +502,7 @@ def calc_lambda_r(r, r1, r2, r3, r4, En):
     #     print('Circular orbits currently do not work.')
     #     return 0
     yr = sqrt(((r - r2) * (r1 - r3)) / ((r1 - r2) * (r - r3)))
-    F_asin = ellipf(asin(yr), kr)
+    F_asin = ellipfinc(asin(yr), kr)
     return (2 * F_asin) / (sqrt(1 - En * En) * sqrt((r1 - r3) * (r2 - r4)))
 
 
@@ -516,7 +525,6 @@ def calc_lambda_psi(psi, ups_r, r1, r2, r3, r4, En, slr, ecc):
         r (float): radius
         lambda_psi (float)
     """
-    pi = mp.pi
     r = calc_radius(psi, slr, ecc)
     lam_r = 2 * pi / ups_r  # radial period
     lam_r1 = calc_lambda_r(r2, r1, r2, r3, r4, En)
@@ -547,13 +555,12 @@ def calc_lambda_0(chi, zp, zm, En, Lz, aa, slr, x):
         lambda_0 (float)
 
     """
-    pi = mp.pi
     beta = aa * aa * (1 - En * En)
     k = sqrt(zm / zp)
     k2 = k * k
     prefactor = 1 / sqrt(beta * zp)
     ellipticK_k = ellipk(k2)
-    ellipticF = ellipf(pi / 2 - chi, k2)
+    ellipticF = ellipfinc(pi / 2 - chi, k2)
 
     return prefactor * (ellipticK_k - ellipticF)
 
@@ -574,7 +581,6 @@ def calc_wtheta(chi, ups_theta, zp, zm, En, Lz, aa, slr, x):
     Returns:
         w_theta (float)
     """
-    pi = mp.pi
     if chi >= 0 and chi <= pi / 2:
         return ups_theta * calc_lambda_0(chi, zp, zm, En, Lz, aa, slr, x)
     elif chi > pi / 2 and chi <= pi:
@@ -602,7 +608,6 @@ def calc_dwtheta_dchi(chi, zp, zm):
     Returns:
         dw_dtheta (float)
     """
-    pi = mp.pi
     k = sqrt(zm / zp)
     ellipticK_k = ellipk(k ** 2)
     return pi / (2 * ellipticK_k) * (1 / (1 - k * k * cos(chi) ** 2))
@@ -620,13 +625,13 @@ def calc_wr(psi, ups_r, En, Lz, Q, aa, slr, ecc, x):
     c1 = (((3 + ecc**2)*(1 - En**2))/(1 - ecc**2) - 4/slr + 
           ((1 - ecc**2)*(aa**2*(1 - En**2) + Lz**2 + Q))/slr**2)
 
-    if psi == mp.pi:
+    if psi == pi:
         # the closed form function has a singularity at psi = pi
         # but it can be evaluated in integral form to be pi
-        return mp.pi
+        return pi
     else:
         return ((-2j*(1 - ecc**2)*ups_r*cos(psi/2.)**2*
-            ellipf(1j*asinh(sqrt((a1 - (-1 + ecc)*(b1 + c1 - c1*ecc))/
+            ellipfinc(1j*asinh(sqrt((a1 - (-1 + ecc)*(b1 + c1 - c1*ecc))/
                 (a1 + b1 + c1 - c1*ecc**2 + sqrt((b1**2 - 4*a1*c1)*ecc**2)))*tan(psi/2.)),
             (a1 + b1 + c1 - c1*ecc**2 + sqrt((b1**2 - 4*a1*c1)*ecc**2))/
             (a1 + b1 + c1 - c1*ecc**2 - sqrt((b1**2 - 4*a1*c1)*ecc**2)))*
@@ -733,7 +738,6 @@ def calc_equatorial_coords(
         theta (float): polar coordinate
         phi (float): azimuthal coordinate
     """
-    pi = mp.pi
     if zm != 0:
         print("The orbit specified is not equatorial.")
     r, lam_psi = calc_lambda_psi(psi, ups_r, r1, r2, r3, r4, En, slr, ecc)
@@ -868,7 +872,7 @@ def calc_gen_coords(
     qt0=0,
 ):
     wr = calc_wr(psi, ups_r, En, Lz, Q, aa, slr, ecc, x)
-    wr = wr.real  # this should be a real value
+    wr = real(wr)  # this should be a real value
     # wtheta = calc_wtheta(chi, ups_theta, zp, zm, En, Lz, aa, slr, x)
     # when evaluating the orbit, we do not separate theta and r directions
     # when evaluating the flux integral, we will

@@ -1,4 +1,5 @@
-from mpmath import sqrt, ellipk, ellippi, ellipe, mp
+from numpy import sqrt, ellipk, ellipe, pi
+from mpmath import ellippi
 
 
 def mino_freqs_sc(slr, ecc, x):
@@ -16,7 +17,6 @@ def mino_freqs_sc(slr, ecc, x):
         ups_phi (float): azimuthal Mino frequency
         gamma (float): time Mino frequency
     """
-    pi = mp.pi
     ups_r = (pi * sqrt(-((slr * (-6 + 2 * ecc + slr)) / (3 + ecc ** 2 - slr)))) / (
         2 * ellipk((4 * ecc) / (-6 + 2 * ecc + slr))
     )
@@ -47,10 +47,10 @@ def mino_freqs_sc(slr, ecc, x):
                     * (6 + 2 * ecc - slr)
                     * (3 + ecc ** 2 - slr)
                     * slr ** 2
-                    * ellippi(
+                    * float(ellippi(
                         (2 * ecc * (-4 + slr)) / ((1 + ecc) * (-6 + 2 * ecc + slr)),
                         (4 * ecc) / (-6 + 2 * ecc + slr),
-                    )
+                    ))
                 )
                 / ((-1 + ecc) * (1 + ecc) ** 2)
                 + (
@@ -60,10 +60,10 @@ def mino_freqs_sc(slr, ecc, x):
                     * (
                         2 * (1 + ecc) * ellipk((4 * ecc) / (-6 + 2 * ecc + slr))
                         + (-6 - 2 * ecc + slr)
-                        * ellippi(
+                        * float(ellippi(
                             (2 * ecc * (-4 + slr)) / ((1 + ecc) * (-6 + 2 * ecc + slr)),
                             (4 * ecc) / (-6 + 2 * ecc + slr),
-                        )
+                        ))
                     )
                 )
                 / (1 + ecc)
@@ -74,11 +74,11 @@ def mino_freqs_sc(slr, ecc, x):
                     - (
                         (6 + 2 * ecc - slr)
                         * slr
-                        * ellippi(
+                        * float(ellippi(
                             (16 * ecc)
                             / (12 + 8 * ecc - 4 * ecc ** 2 - 8 * slr + slr ** 2),
                             (4 * ecc) / (-6 + 2 * ecc + slr),
-                        )
+                        ))
                     )
                     / (2 + 2 * ecc - slr)
                 )
@@ -118,7 +118,6 @@ def mino_freqs_kerr(r1, r2, r3, r4, En, Lz, Q, aa, slr, ecc, x, M=1):
     """
     # En, Lz, Q = calc_eq_constants(aa, slr, ecc)
     # r1, r2, r3, r4 = radial_roots(En, Q, aa, slr, ecc, M)
-    pi = mp.pi
     L2 = Lz * Lz
     aa2 = aa * aa
     En2 = En * En
