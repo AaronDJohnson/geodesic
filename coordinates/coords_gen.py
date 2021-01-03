@@ -8,7 +8,6 @@ from scipy.special import ellipkinc
 from scipy.special import ellipeinc
 from mpmath import ellippi  # elliptic integral of third kind not implemented in scipy yet
 
-from coordinates.special_func import am
 
 def calc_radius(psi, slr, ecc):
     """

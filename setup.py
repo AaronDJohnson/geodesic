@@ -13,6 +13,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/AaronDJohnson/geodesic",
     packages=setuptools.find_packages(),
+    install_requires=[
+        'numpy>=1.19.0',
+        'scipy>=1.6.0',
+        'mpmath>=1.1.0',
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
