@@ -1,12 +1,14 @@
-from numpy import sin, asin, cos, acos, asinh
+from numpy import sin, cos
+from numpy import arccos
+from numpy import arcsinh
+from numpy import arcsin
 from numpy import sqrt, floor, pi, tan, real
 from scipy.special import ellipj, ellipk, ellipe
-from scipy.special import ellipeinc, ellipf, ellipfinc
+from scipy.special import ellipkinc
+from scipy.special import ellipeinc
 from mpmath import ellippi  # elliptic integral of third kind not implemented in scipy yet
-try:
-    from special_func import am
-except:
-    from geodesic.coordinates.special_func import am
+
+from coordinates.special_func import am
 
 def calc_radius(psi, slr, ecc):
     """
@@ -418,7 +420,7 @@ def calc_theta(mino_t, ups_theta, qz0, zp, zm, En, aa):
         theta (float)
     """
     eta = ups_theta * mino_t + qz0
-    return acos(calc_zq(eta, zp, zm, En, aa))
+    return arccos(calc_zq(eta, zp, zm, En, aa))
 
 
 def calc_phi(
@@ -502,7 +504,7 @@ def calc_lambda_r(r, r1, r2, r3, r4, En):
     #     print('Circular orbits currently do not work.')
     #     return 0
     yr = sqrt(((r - r2) * (r1 - r3)) / ((r1 - r2) * (r - r3)))
-    F_asin = ellipfinc(asin(yr), kr)
+    F_asin = ellipkinc(arcsin(yr), kr)
     return (2 * F_asin) / (sqrt(1 - En * En) * sqrt((r1 - r3) * (r2 - r4)))
 
 
@@ -560,7 +562,7 @@ def calc_lambda_0(chi, zp, zm, En, Lz, aa, slr, x):
     k2 = k * k
     prefactor = 1 / sqrt(beta * zp)
     ellipticK_k = ellipk(k2)
-    ellipticF = ellipfinc(pi / 2 - chi, k2)
+    ellipticF = ellipkinc(pi / 2 - chi, k2)
 
     return prefactor * (ellipticK_k - ellipticF)
 
@@ -631,7 +633,7 @@ def calc_wr(psi, ups_r, En, Lz, Q, aa, slr, ecc, x):
         return pi
     else:
         return ((-2j*(1 - ecc**2)*ups_r*cos(psi/2.)**2*
-            ellipfinc(1j*asinh(sqrt((a1 - (-1 + ecc)*(b1 + c1 - c1*ecc))/
+            ellipkinc(1j*arcsinh(sqrt((a1 - (-1 + ecc)*(b1 + c1 - c1*ecc))/
                 (a1 + b1 + c1 - c1*ecc**2 + sqrt((b1**2 - 4*a1*c1)*ecc**2)))*tan(psi/2.)),
             (a1 + b1 + c1 - c1*ecc**2 + sqrt((b1**2 - 4*a1*c1)*ecc**2))/
             (a1 + b1 + c1 - c1*ecc**2 - sqrt((b1**2 - 4*a1*c1)*ecc**2)))*

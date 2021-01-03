@@ -1,15 +1,10 @@
 from numpy import cos
-try:
-    from constants.constants import calc_constants
-    from geo_roots import radial_roots, polar_roots
-    from frequencies import mino_freqs, find_omega, mino_freqs, boyer_freqs
-    from coordinates.coords import calc_coords
-except:
-    from geodesic.constants.constants import calc_constants
-    from geodesic.geo_roots import radial_roots, polar_roots
-    from geodesic.frequencies import mino_freqs, find_omega, mino_freqs, boyer_freqs
-    from geodesic.coordinates.coords import calc_coords
-    from geodesic.coordinates.coords_gen import calc_gen_coords_mino
+
+from constants.constants import calc_constants
+from geo_roots import radial_roots, polar_roots
+from frequencies import mino_freqs, find_omega, mino_freqs, boyer_freqs
+from coordinates.coords import calc_coords
+from coordinates.coords_gen import calc_gen_coords_mino
 
 
 def calc_consts(aa, slr, ecc, x):

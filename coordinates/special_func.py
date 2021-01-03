@@ -1,5 +1,5 @@
 from mpmath import ellipfun
-from numpy import isreal, asin, floor, tanh
+from numpy import isreal, arcsin, floor, tanh
 
 
 def jacobi_am_f(x, m):

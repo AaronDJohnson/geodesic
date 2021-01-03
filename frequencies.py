@@ -1,4 +1,5 @@
-from numpy import sqrt, ellipk, ellipe, pi
+from numpy import sqrt, pi
+from scipy.special import ellipk, ellipe
 from mpmath import ellippi
 
 
