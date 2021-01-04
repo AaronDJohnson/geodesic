@@ -1,5 +1,5 @@
-from coordinates.coords_gen import calc_equatorial_coords, calc_gen_coords
-from coordinates.coords_circ_eq import calc_circular_eq_coords
+from geodesic.coordinates.coords_gen import calc_equatorial_coords, calc_gen_coords
+from geodesic.coordinates.coords_circ_eq import calc_circular_eq_coords
 
 
 def calc_coords(
