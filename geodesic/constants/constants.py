@@ -1,8 +1,15 @@
-from geodesic.constants.constants_eq import calc_eq_constants
-from geodesic.constants.constants_gen import calc_gen_constants
-from geodesic.constants.constants_pol import calc_pol_constants
-from geodesic.constants.constants_sc import calc_sc_constants
-from geodesic.constants.constants_sph import calc_sph_constants
+try:
+    from geodesic.constants.constants_eq import calc_eq_constants
+    from geodesic.constants.constants_gen import calc_gen_constants
+    from geodesic.constants.constants_pol import calc_pol_constants
+    from geodesic.constants.constants_sc import calc_sc_constants
+    from geodesic.constants.constants_sph import calc_sph_constants
+except:
+    from .constants_eq import calc_eq_constants
+    from .constants_gen import calc_gen_constants
+    from .constants_pol import calc_pol_constants
+    from .constants_sc import calc_sc_constants
+    from .constants_sph import calc_sph_constants
 
 
 def calc_constants(aa, slr, ecc, x):
