@@ -1,7 +1,7 @@
 from numpy import cos
 
 try:
-    from geodesic.constants.constants import calc_constants
+    from geodesic.constants import calc_constants
     from geodesic.geo_roots import radial_roots, polar_roots
     from geodesic.frequencies import mino_freqs, find_omega, mino_freqs, boyer_freqs
     from geodesic.coordinates.coords import calc_coords
